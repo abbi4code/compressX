@@ -1,41 +1,33 @@
-// use flate2::bufread::GzDecoder;
-use flate2::write::GzEncoder;
-use flate2::Compression;
-use std::env::args;
-use std::fs::File;
-use std::io::copy;
-use std::io::BufReader;
-use std::time::Instant;
+use std::{env::args, process};
+mod archive;
 
-fn main() {
-    if args().len() != 3 {
-        eprintln!("Usage: `source` `target`");
-        return;
-    } 
-    
-    let mut input = BufReader::new(File::open(args().nth(1).unwrap()).unwrap());
+fn main(){
 
-    let output = File::create(args().nth(2).unwrap()).unwrap();
+    if args().len() != 4 {
+        eprintln!("Usage: `program compress|decompress source target`");
+        process::exit(1);
+    }
 
-    let mut encoder = GzEncoder::new(output, Compression::default());
+    let operation = args().nth(1).unwrap();
+    let source= args().nth(2).unwrap();
+    let target = args().nth(3).unwrap();
 
-    let start = Instant::now();
-
-    //this will copy the thing from the reader to writer continuously and will return you the no of bytes it copied
-    copy(&mut input,&mut encoder).unwrap();
-
-    let output = encoder.finish().unwrap();
-    println!("{:?}",input);
-
-    println!("Source Len: {:?}", input.get_ref().metadata().unwrap().len());
-
-    println!("Target len: {:?}", output.metadata().unwrap().len());
-
-    println!("Elapsed Time: {:?}", start.elapsed());
-
-    // println!("args are {:?}", args());
-
-
-
+    //converting the op into as_str()
+    match operation.as_str(){
+        "compress" => {
+            //if let as here compress fn will result a option or result
+            if let Err(e) = archive::compress::compress(&source, &target) {.e
+                eprintln!("Error compressing: {}", e)
+            }
+        },
+        "decompress" => {
+            if let Err(e) = archive::decompress::decompress(&source, &target) {
+                eprintln!("Error while decompressing {}",e);
+            }
+        },
+        _ => {
+            eprintln!("Invalid operation. Choose 'compress' or 'decompress' ");
+            process::exit(1);
+        }
+    }
 }
-
