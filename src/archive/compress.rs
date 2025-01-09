@@ -33,7 +33,7 @@ pub fn compress(source: &str, target: &str ) -> io::Result<()> {
 
     let start = Instant::now();
 
-    copy(&mut input, &mut encoder);
+    copy(&mut input, &mut encoder)?;
 
     let output = encoder.finish()?;
     //get_ref() will call is used to access the ori obj (file)

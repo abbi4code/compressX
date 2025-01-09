@@ -16,7 +16,7 @@ fn main(){
     match operation.as_str(){
         "compress" => {
             //if let as here compress fn will result a option or result
-            if let Err(e) = archive::compress::compress(&source, &target) {.e
+            if let Err(e) = archive::compress::compress(&source, &target) {
                 eprintln!("Error compressing: {}", e)
             }
         },
